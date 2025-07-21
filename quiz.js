@@ -31,10 +31,18 @@ function loadQuiz() {
 }
 
 function submitQuiz() {
-  const username = document.getElementById("username").value.trim();
-  if (username === "") {
+  const totalQuestions = quizData.length;
+  const score = calculateScore(); // Your existing score logic
+  const name = document.getElementById("username").value.trim();
+
+  if (!name) {
     alert("Please enter your name.");
     return;
+  }
+
+  // Redirect to certificate page with query params
+  const redirectUrl = `certificate.html?name=${encodeURIComponent(name)}&score=${score}`;
+  window.location.href = redirectUrl;
   }
 
   let score = 0;
