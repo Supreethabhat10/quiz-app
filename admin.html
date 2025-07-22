@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Admin</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Quiz Responses</h2>
+  <button onclick="exportExcel()">Export to Excel</button>
+  <table id="responseTable">
+    <thead>
+      <tr><th>Name</th><th>Score</th><th>Date</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const responses = JSON.parse(localStorage.getItem("quizResponses") || "[]");
+    const tbody = document.querySelector("#responseTable tbody");
+
+    responses.forEach(r => {
+      const row = `<tr><td>${r.name}</td><td>${r.score}</td><td>${r.date}</td></tr>`;
+      tbody.innerHTML += row;
+    });
+
+    function exportExcel() {
+      let table = document.getElementById("responseTable").outerHTML;
+      let dataUri = 'data:application/vnd.ms-excel,' + encodeURIComponent(table);
+      let link = document.createElement("a");
+      link.href = dataUri;
+      link.download = "quiz_responses.xls";
+      link.click();
+    }
+  </script>
+</body>
+</html>
