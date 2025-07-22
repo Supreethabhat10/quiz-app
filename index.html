@@ -48,17 +48,29 @@
     <label for="userName"><strong>Your Name:</strong></label><br>
     <input type="text" id="userName" placeholder="Enter your name" style="width: 100%; padding: 10px;" required />
   </div>
-  <form id="quizForm"></form>
+  <form id="quizForm" onsubmit="event.preventDefault(); submitQuiz();"></form>
   <button class="btn" onclick="submitQuiz()">Submit</button>
 </div>
+
 <script>
   let questions = [];
-  fetch('question.json')
-    .then(response => response.json())
-    .then(data => {
-      questions = data.questions;
-      renderQuiz(questions);
-    });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('question.json')
+      .then(response => {
+        if (!response.ok) throw new Error("Question file not found");
+        return response.json();
+      })
+      .then(data => {
+        questions = data.questions;
+        renderQuiz(questions);
+      })
+      .catch(err => {
+        document.getElementById('quizForm').innerHTML = `<p style="color:red;">Error loading quiz questions.</p>`;
+        console.error(err);
+      });
+  });
+
   function renderQuiz(questions) {
     const form = document.getElementById('quizForm');
     form.innerHTML = '';
@@ -78,12 +90,14 @@
       form.appendChild(div);
     });
   }
+
   function submitQuiz() {
     const name = document.getElementById('userName').value.trim();
     if (!name) {
       alert('Please enter your name.');
       return;
     }
+
     let score = 0;
     questions.forEach((q, index) => {
       const selected = document.querySelector(`input[name="q${index}"]:checked`);
@@ -91,11 +105,12 @@
         score++;
       }
     });
+
     localStorage.setItem('userName', name);
     localStorage.setItem('quizScore', score);
+
     window.location.href = 'result.html';
   }
 </script>
 </body>
 </html>
-
